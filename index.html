@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Интерактивные опросы</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="app-header">
+    <button class="theme-corner-button" id="theme-toggle" type="button">Темная тема</button>
+    <div class="header-inner">
+      <div>
+        <p class="eyebrow">Учебный проект</p>
+        <h1>Интерактивные опросы</h1>
+      </div>
+      <nav class="main-nav" aria-label="Основная навигация">
+        <button class="nav-button is-active" type="button" data-section-target="catalog">Каталог</button>
+        <button class="nav-button" type="button" data-section-target="builder">Конструктор</button>
+        <button class="nav-button" type="button" data-section-target="account">Личный кабинет</button>
+        <button class="nav-button" id="admin-nav-button" type="button" data-section-target="admin" hidden>Админ-панель</button>
+        <button class="nav-button" type="button" data-section-target="results">Результаты</button>
+      </nav>
+      <form class="auth-form" id="auth-form">
+        <div class="auth-fields" id="auth-fields">
+          <label class="visually-hidden" for="auth-email">Почта</label>
+          <input id="auth-email" type="text" inputmode="email" placeholder="Почта" autocomplete="email">
+          <label class="visually-hidden" for="auth-password">Пароль</label>
+          <input id="auth-password" type="password" placeholder="Пароль" autocomplete="current-password">
+        </div>
+        <div class="auth-actions">
+          <button class="secondary-button" id="login-button" type="submit">Войти</button>
+          <button class="ghost-button" id="register-button" type="button">Регистрация</button>
+          <button class="ghost-button" id="logout-button" type="button" hidden>Выйти</button>
+        </div>
+        <p class="auth-message" id="auth-message" role="status"></p>
+      </form>
+    </div>
+  </header>
+
+  <main class="app-shell">
+    <section class="section is-visible" id="catalog" aria-labelledby="catalog-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Доступные опросы</p>
+          <h2 id="catalog-title">Каталог опросов</h2>
+        </div>
+      </div>
+
+      <div class="dashboard-grid" id="catalog-dashboard" aria-label="Сводка по каталогу"></div>
+
+      <div class="toolbar-panel">
+        <label class="field" for="catalog-search">
+          <span>Поиск</span>
+          <input id="catalog-search" type="search" placeholder="Название опроса">
+        </label>
+        <label class="field" for="catalog-filter">
+          <span>Фильтр</span>
+          <select id="catalog-filter">
+            <option value="all">Все доступные</option>
+            <option value="mine">Мои опросы</option>
+            <option value="active">Активные</option>
+            <option value="closed">Закрытые</option>
+            <option value="linkOnly">Только по ссылке</option>
+            <option value="authorized">Требуется вход</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="poll-grid" id="poll-list"></div>
+      <div class="empty-state" id="catalog-empty" hidden>
+        <h3>Опросы не найдены</h3>
+        <p>Измените фильтр или создайте новый опрос в конструкторе.</p>
+      </div>
+    </section>
+
+    <section class="section" id="builder" aria-labelledby="builder-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Создание и редактирование</p>
+          <h2 id="builder-title">Конструктор опроса</h2>
+        </div>
+      </div>
+
+      <form class="builder-form" id="builder-form">
+        <input id="editing-poll-id" type="hidden">
+        <div class="form-grid">
+          <label class="field">
+            <span>Название опроса</span>
+            <input id="poll-title" name="title" type="text" placeholder="Например: Оценка учебного занятия" required>
+          </label>
+          <label class="field">
+            <span>Краткое описание</span>
+            <textarea id="poll-description" name="description" rows="3" placeholder="Для кого и зачем проводится опрос"></textarea>
+          </label>
+        </div>
+
+        <fieldset class="settings-panel">
+          <legend>Настройки публикации</legend>
+          <div class="settings-grid">
+            <label class="field">
+              <span>Статус</span>
+              <select id="poll-status">
+                <option value="draft">Черновик</option>
+                <option value="active" selected>Активен</option>
+                <option value="closed">Закрыт</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>Дата начала</span>
+              <input id="poll-starts-at" type="datetime-local">
+            </label>
+            <label class="field">
+              <span>Дата окончания</span>
+              <input id="poll-ends-at" type="datetime-local">
+            </label>
+          </div>
+        </fieldset>
+
+        <fieldset class="settings-panel">
+          <legend>Настройки доступа</legend>
+          <div class="settings-grid">
+            <label class="choice-card">
+              <input id="audience-all" name="poll-audience" type="radio" value="all" checked>
+              <span>
+                <strong>Для всех</strong>
+                <small>Опрос могут проходить гости и авторизованные пользователи.</small>
+              </span>
+            </label>
+            <label class="choice-card">
+              <input name="poll-audience" type="radio" value="authorized">
+              <span>
+                <strong>Только авторизованные</strong>
+                <small>Перед прохождением нужно войти по почте и паролю.</small>
+              </span>
+            </label>
+            <label class="choice-card">
+              <input id="poll-anonymous" name="poll-anonymous" type="checkbox" checked>
+              <span>
+                <strong>Анонимный опрос</strong>
+                <small>В истории не будет показана почта участника.</small>
+              </span>
+            </label>
+            <label class="choice-card">
+              <input id="poll-link-only" name="poll-link-only" type="checkbox">
+              <span>
+                <strong>Доступ только по ссылке</strong>
+                <small>Опрос скрыт из каталога и открывается по личной ссылке.</small>
+              </span>
+            </label>
+            <label class="choice-card">
+              <input id="poll-single-attempt" name="poll-single-attempt" type="checkbox">
+              <span>
+                <strong>Одно прохождение</strong>
+                <small>Авторизованный пользователь сможет пройти опрос только один раз.</small>
+              </span>
+            </label>
+          </div>
+        </fieldset>
+
+        <div class="builder-toolbar">
+          <h3>Вопросы</h3>
+          <button class="secondary-button" id="add-question" type="button">Добавить вопрос</button>
+        </div>
+
+        <div class="question-builder-list" id="question-builder-list"></div>
+
+        <p class="form-message" id="form-message" role="status"></p>
+        <div class="link-box" id="created-link-box" hidden>
+          <label class="field" for="created-link">
+            <span>Ссылка на скрытый опрос</span>
+            <input id="created-link" type="text" readonly>
+          </label>
+          <button class="secondary-button" id="copy-created-link" type="button">Скопировать ссылку</button>
+        </div>
+
+        <div class="form-actions">
+          <button class="primary-button" type="submit">Сохранить опрос</button>
+          <button class="secondary-button" id="preview-poll" type="button">Предпросмотр</button>
+          <button class="ghost-button" id="reset-builder" type="button">Очистить форму</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="section" id="account" aria-labelledby="account-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Профиль</p>
+          <h2 id="account-title">Личный кабинет</h2>
+        </div>
+      </div>
+      <div id="account-content"></div>
+    </section>
+
+    <section class="section" id="admin" aria-labelledby="admin-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Управление</p>
+          <h2 id="admin-title">Админ-панель</h2>
+        </div>
+      </div>
+      <div id="admin-content"></div>
+    </section>
+
+    <section class="section" id="taking" aria-labelledby="taking-title">
+      <div class="quiz-panel">
+        <div class="quiz-topline">
+          <button class="ghost-button" id="close-quiz" type="button">Вернуться в каталог</button>
+          <span id="quiz-progress-label">Вопрос 1 из 1</span>
+        </div>
+        <div class="progress-bar" aria-hidden="true">
+          <span id="quiz-progress-bar"></span>
+        </div>
+        <div class="quiz-layout">
+          <aside class="quiz-steps" id="quiz-steps" aria-label="Список вопросов"></aside>
+          <div class="quiz-main">
+            <p class="eyebrow" id="taking-title">Прохождение опроса</p>
+            <h2 id="quiz-title">Название опроса</h2>
+            <p class="muted" id="quiz-description"></p>
+            <fieldset class="quiz-question">
+              <legend id="question-title">Вопрос</legend>
+              <div class="answer-list" id="answer-list"></div>
+            </fieldset>
+            <p class="form-message" id="quiz-message" role="status"></p>
+            <div class="quiz-actions">
+              <button class="secondary-button" id="previous-question" type="button">Назад</button>
+              <button class="primary-button" id="next-question" type="button">Далее</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="results" aria-labelledby="results-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Аналитика</p>
+          <h2 id="results-title">Результаты опросов</h2>
+        </div>
+        <div class="results-actions">
+          <button class="secondary-button" id="export-results" type="button">Скачать CSV</button>
+          <button class="secondary-button" id="show-history" type="button" aria-expanded="false">История прохождений</button>
+          <button class="ghost-button" id="clear-results" type="button">Очистить результаты</button>
+        </div>
+      </div>
+
+      <div class="history-panel" id="history-panel" hidden>
+        <div class="history-toolbar">
+          <label class="field compact-field" for="history-filter">
+            <span>Показать историю</span>
+            <select id="history-filter">
+              <option value="all">Все опросы</option>
+            </select>
+          </label>
+          <label class="field compact-field" for="history-user-filter">
+            <span>Пользователь</span>
+            <select id="history-user-filter">
+              <option value="all">Все пользователи</option>
+            </select>
+          </label>
+          <label class="field compact-field" for="history-status-filter">
+            <span>Статус</span>
+            <select id="history-status-filter">
+              <option value="all">Все статусы</option>
+              <option value="draft">Черновик</option>
+              <option value="active">Активен</option>
+              <option value="closed">Закрыт</option>
+            </select>
+          </label>
+          <span class="history-counter" id="history-counter">0 прохождений</span>
+        </div>
+        <div class="history-list" id="history-list"></div>
+        <div class="empty-state history-empty" id="history-empty" hidden>
+          <h3>История пуста</h3>
+          <p>Выберите другой фильтр или пройдите опрос из каталога.</p>
+        </div>
+      </div>
+
+      <div class="results-list" id="results-list"></div>
+      <div class="empty-state" id="results-empty" hidden>
+        <h3>Результатов пока нет</h3>
+        <p>Пройдите любой опрос из каталога, чтобы увидеть статистику ответов.</p>
+      </div>
+    </section>
+  </main>
+
+  <dialog class="preview-dialog" id="preview-dialog">
+    <div class="preview-head">
+      <div>
+        <p class="eyebrow">Предпросмотр</p>
+        <h2 id="preview-title">Опрос</h2>
+      </div>
+      <button class="ghost-button" id="close-preview" type="button">Закрыть</button>
+    </div>
+    <div class="preview-body" id="preview-body"></div>
+  </dialog>
+
+  <dialog class="preview-dialog" id="public-dialog">
+    <div class="preview-head">
+      <div>
+        <p class="eyebrow">Публичная страница</p>
+        <h2 id="public-title">Опрос</h2>
+      </div>
+      <button class="ghost-button" id="close-public" type="button">Закрыть</button>
+    </div>
+    <div class="preview-body" id="public-body"></div>
+  </dialog>
+
+  <div class="toast-stack" id="toast-stack" aria-live="polite"></div>
+
+  <template id="question-template">
+    <article class="question-editor">
+      <div class="question-editor-head">
+        <h4></h4>
+        <button class="text-button remove-question" type="button">Удалить вопрос</button>
+      </div>
+      <div class="question-grid">
+        <label class="field">
+          <span>Тип вопроса</span>
+          <select class="question-type">
+            <option value="single">Один вариант</option>
+            <option value="multiple">Несколько вариантов</option>
+            <option value="text">Текстовый ответ</option>
+            <option value="scale">Шкала 1-5</option>
+            <option value="boolean">Да/нет</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>Текст вопроса</span>
+          <input class="question-text" type="text" placeholder="Введите вопрос">
+        </label>
+      </div>
+      <div class="options-list"></div>
+      <button class="secondary-button add-option" type="button">Добавить вариант</button>
+    </article>
+  </template>
+
+  <script src="script.js"></script>
+</body>
+</html>

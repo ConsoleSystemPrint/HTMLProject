@@ -1,0 +1,16 @@
+# зависимости и сборка
+node_modules/
+client/dist/
+
+# локальные настройки и данные
+.env
+server/.env
+server/database.sqlite*
+*.log
+.DS_Store
+
+# локальный отчет и служебные файлы
+docs/*.docx
+docs/otchet_rendered/
+tools/create_project_report.py
+tools/__pycache__/
