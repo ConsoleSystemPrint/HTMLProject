@@ -8,11 +8,11 @@ React, Vite, Node.js, Express, Socket.IO, SQLite, JWT.
 
 ## Структура
 
-- `client/` — React-интерфейс приложения.
-- `server/` — REST API, Socket.IO и работа с SQLite.
-- `tools/` — автоматический smoke-тест.
-- `docs/` — пояснительные материалы проекта.
-- `index.html`, `styles.css`, `script.js` — архив статического прототипа.
+- `client/` — React интерфейс
+- `server/` — REST API, Socket.IO и работа с SQLite
+- `tools/` — автоматические тесты
+- `docs/` — пояснительные материалы проекта
+- `index.html`, `styles.css`, `script.js` — архив статического прототипа
 
 ## Запуск
 
@@ -21,6 +21,6 @@ npm run install:all
 npm run dev
 ```
 
-После запуска сайт доступен по адресу [http://127.0.0.1:5173](http://127.0.0.1:5173).
+После запуска сайт доступен по адресу [http://127.0.0.1:5173](http://127.0.0.1:5173)
 
-Макеты: [Figma](https://www.figma.com/design/lLT6lRo2NY7EcxmLQPyaAw/HTMLProject).
+Макеты: [Figma](https://www.figma.com/design/lLT6lRo2NY7EcxmLQPyaAw/HTMLProject)
