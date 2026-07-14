@@ -1,5 +1,4 @@
 const POLLS_STORAGE_KEY = 'interactivePolls.polls';
-
 const RESULTS_STORAGE_KEY = 'interactivePolls.results';
 const USERS_STORAGE_KEY = 'interactivePolls.users';
 const SESSION_STORAGE_KEY = 'interactivePolls.currentUser';
