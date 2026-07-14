@@ -1,5 +1,6 @@
 import { db } from './db.js';
 
+
 // проверка формата ответа
 export function validateAnswerPayload(question, answers, payload) {
   if (!question) return 'Вопрос не найден.';

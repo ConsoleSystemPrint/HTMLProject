@@ -1,4 +1,5 @@
 import Database from 'better-sqlite3';
+
 import { randomInt } from 'node:crypto';
 
 const databasePath = process.env.DB_PATH || new URL('../database.sqlite', import.meta.url).pathname;
