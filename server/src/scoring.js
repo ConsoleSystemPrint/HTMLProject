@@ -1,6 +1,6 @@
 import { db } from './db.js';
 
-// проверяем формат ответа перед сохранением
+// проверка формата ответа
 export function validateAnswerPayload(question, answers, payload) {
   if (!question) return 'Вопрос не найден.';
   if (question.type === 'text' || question.type === 'image') {
@@ -20,7 +20,7 @@ export function validateAnswerPayload(question, answers, payload) {
   return null;
 }
 
-// сравниваем ответ и начисляем баллы
+// проверка ответа и начисление баллов
 export function gradeAnswer(question, answers, payload, timing = null) {
   const awardPoints = (isCorrect) => {
     if (!isCorrect) return 0;
@@ -43,7 +43,7 @@ export function gradeAnswer(question, answers, payload, timing = null) {
   return { isCorrect, pointsEarned: awardPoints(isCorrect) };
 }
 
-// обновляем общий балл участника
+// пересчет общего балла
 export function recalculateScore(roomId, userId) {
   const total = db.prepare(`
     SELECT COALESCE(SUM(pointsEarned), 0) AS score

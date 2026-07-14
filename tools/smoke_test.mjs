@@ -32,7 +32,7 @@ async function waitForServer() {
       const response = await fetch(`${baseUrl}/api/health`);
       if (response.ok) return;
     } catch {
-      // Server is still starting.
+      // ожидание запуска сервера
     }
     await new Promise((resolveWait) => setTimeout(resolveWait, 100));
   }

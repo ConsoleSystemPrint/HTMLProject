@@ -6,7 +6,7 @@ export const db = new Database(databasePath);
 db.pragma('journal_mode = WAL');
 db.pragma('foreign_keys = ON');
 
-// создаем основные таблицы при первом запуске
+// таблицы базы данных
 db.exec(`
   CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -96,7 +96,7 @@ db.exec(`
   CREATE INDEX IF NOT EXISTS idx_submissions_room_user ON submissions(roomId, userId);
 `);
 
-// добавляем новые поля в уже существующую базу
+// обновление структуры базы данных
 try {
   db.prepare('ALTER TABLE rooms ADD COLUMN createdAt TEXT').run();
   db.prepare('UPDATE rooms SET createdAt = COALESCE(createdAt, startedAt, CURRENT_TIMESTAMP)').run();
@@ -159,7 +159,7 @@ export function getQuizWithQuestions(quizId) {
   };
 }
 
-// скрываем правильные ответы до проверки результата
+// публичные данные вопроса
 export function publicQuestion(question) {
   return {
     id: question.id,
@@ -198,7 +198,7 @@ export function getPublicQuizSummary(quizId) {
   return quiz || null;
 }
 
-// почта добавляется только для закрытого экспорта организатора
+// email для экспорта организатора
 export function getLeaderboard(roomId, includeEmail = false) {
   return db.prepare(`
     SELECT rp.userId, rp.displayName, rp.score${includeEmail ? ', u.email' : ''}

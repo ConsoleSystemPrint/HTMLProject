@@ -13,7 +13,7 @@ const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || 'http://127.0.0.1:5173';
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const authRateLimit = createRateLimiter({ windowMs: 10 * 60 * 1000, maxRequests: 30 });
 
-// настраиваем http и websocket серверы
+// настройки HTTP и WebSocket
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
@@ -38,7 +38,7 @@ app.get('/api/health', (req, res) => {
   res.json({ ok: true, service: 'quiz-realtime-server' });
 });
 
-// регистрация и вход пользователей
+// регистрация и вход
 app.post('/api/auth/register', authRateLimit, (req, res) => {
   const { email, password, role } = req.body || {};
   const normalizedEmail = String(email || '').trim().toLowerCase();
@@ -83,7 +83,7 @@ app.post('/api/auth/login', authRateLimit, (req, res) => {
   res.json({ user: sanitizeUser(user), token: signUser(user) });
 });
 
-// данные личного кабинета
+// личный кабинет
 app.get('/api/me', requireAuth, (req, res) => {
   const userId = req.user.id;
   const organized = db.prepare(`
@@ -134,7 +134,7 @@ app.get('/api/me', requireAuth, (req, res) => {
   res.json({ user: sanitizeUser(req.user), organized, participated, hostedRooms });
 });
 
-// создание и управление квизами
+// управление квизами
 app.get('/api/quizzes', requireAuth, requireOrganizer, (req, res) => {
   const quizzes = db.prepare(`
     SELECT q.*, COUNT(questions.id) AS questionsCount
@@ -319,7 +319,7 @@ app.delete('/api/quizzes/:id', requireAuth, requireOrganizer, (req, res) => {
   res.json({ ok: true });
 });
 
-// самостоятельное прохождение квиза
+// самостоятельное прохождение
 app.post('/api/quizzes/:id/attempts', requireAuth, (req, res) => {
   if (req.user.role !== 'participant') {
     return res.status(403).json({ error: 'Самостоятельные квизы проходят участники.' });
@@ -420,7 +420,7 @@ app.post('/api/attempts/:code/answers', requireAuth, (req, res) => {
   });
 });
 
-// комнаты для синхронного прохождения
+// синхронные комнаты
 app.post('/api/rooms', requireAuth, requireOrganizer, (req, res) => {
   const quiz = db.prepare('SELECT * FROM quizzes WHERE id = ? AND organizerId = ?').get(req.body?.quizId, req.user.id);
   if (!quiz) {
@@ -500,7 +500,7 @@ app.get('/api/rooms/:code/export.csv', requireAuth, (req, res) => {
   res.send(`\uFEFF${rows.map((row) => row.map(csvValue).join(';')).join('\n')}`);
 });
 
-// приводим данные конструктора к единому виду
+// нормализация данных квиза
 function normalizeQuizPayload(body) {
   const source = body && typeof body === 'object' ? body : {};
   const rawTimeLimit = Number(source.timeLimitSec || 30);
@@ -733,7 +733,7 @@ function translateStatus(status) {
   return statuses[status] || status;
 }
 
-// возвращаем безопасную ошибку без деталей сервера
+// обработка ошибок
 app.use((error, req, res, next) => {
   if (res.headersSent) return next(error);
   console.error(error);
@@ -743,7 +743,7 @@ app.use((error, req, res, next) => {
 
 setupRealtime(io);
 
-// запускаем backend на локальном порту
+// запуск backend
 server.listen(PORT, '127.0.0.1', () => {
   console.log(`Quiz server listening on http://127.0.0.1:${PORT}`);
 });

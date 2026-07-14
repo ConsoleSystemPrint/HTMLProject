@@ -8,7 +8,7 @@ if (process.env.NODE_ENV === 'production' && !process.env.JWT_SECRET) {
   throw new Error('Для production необходимо задать JWT_SECRET.');
 }
 
-// создаем токен для авторизованного пользователя
+// токен авторизованного пользователя
 export function signUser(user) {
   return jwt.sign(
     { id: user.id, email: user.email, role: user.role },
@@ -30,7 +30,7 @@ export function sanitizeUser(user) {
   };
 }
 
-// проверяем токен перед доступом к закрытым маршрутам
+// проверка токена
 export function requireAuth(req, res, next) {
   const header = req.headers.authorization || '';
   const token = header.startsWith('Bearer ') ? header.slice(7) : null;
@@ -59,7 +59,7 @@ export function requireOrganizer(req, res, next) {
   next();
 }
 
-// храним только хеш пароля
+// хранение хэша пароля
 export function hashPassword(password) {
   return bcrypt.hashSync(password, 10);
 }

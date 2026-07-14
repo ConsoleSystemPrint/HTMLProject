@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
-// перенаправляем api и websocket запросы на backend
+// прокси API и WebSocket
 export default defineConfig({
   plugins: [react()],
   server: {

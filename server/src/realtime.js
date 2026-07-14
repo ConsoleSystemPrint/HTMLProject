@@ -15,7 +15,7 @@ import { gradeAnswer, recalculateScore, validateAnswerPayload } from './scoring.
 const activeTimers = new Map();
 const activeQuestions = new Map();
 
-// проверяем пользователя до подключения websocket
+// авторизация WebSocket
 export function setupRealtime(io) {
   io.use((socket, next) => {
     try {
@@ -35,7 +35,7 @@ export function setupRealtime(io) {
     }
   });
 
-  // обрабатываем события комнаты и квиза
+  // события комнаты и квиза
   io.on('connection', (socket) => {
     socket.on('room:host-join', (payload = {}, ack) => {
       try {
@@ -219,7 +219,7 @@ export function setupRealtime(io) {
   });
 }
 
-// открываем вопрос и запускаем общий таймер
+// показ вопроса и таймер
 export function showQuestion(io, room, questionIndex) {
   const quiz = getQuizWithQuestions(room.quizId);
   const question = quiz.questions[questionIndex];
@@ -323,7 +323,7 @@ function ensureActiveQuestion(io, room) {
   return active;
 }
 
-// отправляем текущий вопрос после повторного подключения
+// восстановление текущего вопроса
 function emitCurrentQuestion(io, socket, room) {
   const active = ensureActiveQuestion(io, room);
   if (!active) return;

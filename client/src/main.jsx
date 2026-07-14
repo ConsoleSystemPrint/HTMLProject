@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { io } from 'socket.io-client';
 import './styles.css';
 
-// основные настройки и подписи интерфейса
+// настройки и подписи интерфейса
 const API_URL = import.meta.env.VITE_API_URL || window.location.origin;
 const STATUS_LABELS = {
   draft: 'Черновик',
@@ -31,7 +31,7 @@ const EMPTY_QUESTION = {
   ]
 };
 
-// управляем сессией, темой и текущим экраном
+// сессия, тема и текущий экран
 function App() {
   const [token, setToken] = useState(localStorage.getItem('quizToken') || '');
   const [user, setUser] = useState(readStoredJson('quizUser'));
@@ -131,7 +131,7 @@ function App() {
   );
 }
 
-// форма регистрации и входа
+// регистрация и вход
 function AuthView({ onAuth, notify }) {
   const [mode, setMode] = useState('login');
   const [form, setForm] = useState({ email: '', password: '', role: 'participant' });
@@ -190,7 +190,7 @@ function AuthView({ onAuth, notify }) {
   );
 }
 
-// личный кабинет и каталог доступных квизов
+// личный кабинет и каталог
 function Dashboard({ token, user, notify, onEditQuiz, onStartAttempt }) {
   const [profile, setProfile] = useState(null);
   const [publicQuizzes, setPublicQuizzes] = useState([]);
@@ -405,7 +405,7 @@ function normalizeQuizForForm(quiz) {
   };
 }
 
-// конструктор и импорт вопросов
+// конструктор квиза
 function QuizBuilder({ token, notify, initialQuiz, onResetEdit }) {
   const [quiz, setQuiz] = useState(normalizeQuizForForm(initialQuiz));
   const [csvImport, setCsvImport] = useState('');
@@ -571,7 +571,7 @@ function QuizBuilder({ token, notify, initialQuiz, onResetEdit }) {
   );
 }
 
-// экран организатора и управление комнатой
+// комната организатора
 function HostRoom({ token, notify }) {
   const [quizzes, setQuizzes] = useState([]);
   const [selectedQuiz, setSelectedQuiz] = useState('');
@@ -693,7 +693,7 @@ function HostRoom({ token, notify }) {
   );
 }
 
-// кнопки управления текущим квизом
+// управление квизом
 function RoomControl({ room, state, emit, token, questionIndex, setQuestionIndex, autoMode, setAutoMode }) {
   const totalQuestions = room.quiz?.questions?.length || 0;
   return (
@@ -726,7 +726,7 @@ function RoomControl({ room, state, emit, token, questionIndex, setQuestionIndex
   );
 }
 
-// самостоятельное прохождение в своем темпе
+// самостоятельное прохождение
 function SelfPacedQuiz({ token, attempt, notify, onExit }) {
   const [questionPayload, setQuestionPayload] = useState(null);
   const [questionIndex, setQuestionIndex] = useState(0);
@@ -819,7 +819,7 @@ function SelfPacedQuiz({ token, attempt, notify, onExit }) {
   );
 }
 
-// подключение участника по коду комнаты
+// подключение к комнате
 function JoinRoom({ token, user, notify }) {
   const [code, setCode] = useState('');
   const [nickname, setNickname] = useState('');
@@ -951,7 +951,7 @@ function JoinRoom({ token, user, notify }) {
   );
 }
 
-// универсальная форма ответа на вопрос
+// форма ответа
 function QuestionAnswer({ question, answer, setAnswer, submitAnswer, answered }) {
   const isMultiple = question.type === 'multiple';
   return (
@@ -1011,7 +1011,7 @@ function AnswerFeedback({ feedback }) {
   );
 }
 
-// краткие итоги завершенного квиза
+// итоги квиза
 function ResultsSummary({ results, token, canExport = false }) {
   if (!results?.summary) return null;
   return (
@@ -1119,7 +1119,7 @@ function readStoredJson(key) {
   }
 }
 
-// выполняем запросы к backend и показываем понятные ошибки
+// запросы к backend
 async function api(path, token, options = {}) {
   const response = await fetch(`${API_URL}${path}`, {
     method: options.method || 'GET',
@@ -1136,5 +1136,5 @@ async function api(path, token, options = {}) {
   return data;
 }
 
-// подключаем react к корневому элементу страницы
+// подключение React
 createRoot(document.getElementById('root')).render(<App />);
